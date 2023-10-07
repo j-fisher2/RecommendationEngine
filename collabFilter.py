@@ -8,7 +8,7 @@ class Collaborate:
         return new_row
 
     def get_similar_movies(self,movie_name,user_rating):
-        similar_score=item_similarity_df[movie_name]*user_rating
+        similar_score=item_similarity_df[movie_name]*(user_rating-2.5)
         similar_score=similar_score.sort_values(ascending=False)
 
 ratings=pd.read_csv("./toy_dataset.csv",index_col=0)
