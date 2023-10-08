@@ -25,10 +25,13 @@ class Collaborate:
 class User:
     def __init__(self, movie_ratings, item_similarity_df):
         self.ratings = movie_ratings
-        self.similar = pd.DataFrame()
-        self.item_similarity_df = item_similarity_df  # Use self.item_similarity_df
+        self.similar = pd.DataFrame()  # Initialize an empty DataFrame to store similar movies and scores
+        self.item_similarity_df = item_similarity_df
         for movie, rating in self.ratings:
-            self.similar = pd.concat([self.similar,Collaborate(self.item_similarity_df).get_similar_movies(movie, rating)], ignore_index=True)   
+            similar_movies = Collaborate(self.item_similarity_df).get_similar_movies(movie, rating)
+            similar_movies = pd.DataFrame(similar_movies, columns=[movie])  # Create a DataFrame for each movie and its scores
+            self.similar = pd.concat([self.similar, similar_movies], axis=1)  # Concatenate the DataFrames along columns
+
     def getSimilar(self):
         return self.similar
 
@@ -40,9 +43,11 @@ ratings_std = ratings.apply(Collaborate(None).standardize)
 item_similarity = cosine_similarity(ratings_std.T)  # Item-to-item collab filter
 
 item_similarity_df = pd.DataFrame(item_similarity, index=ratings.columns, columns=ratings.columns)
+print(item_similarity_df)
 
-user1 = User([("action1", 5), ("romantic2", 1), ("romantic3", 1)], item_similarity_df)
+user1 = User([("action1", 5)], item_similarity_df)
 sim_movies = user1.getSimilar()
+sim_movies.sum().sort_values(ascending=False)
 print(sim_movies)
 
 
