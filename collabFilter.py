@@ -32,8 +32,12 @@ class User:
             similar_movies = pd.DataFrame(similar_movies, columns=[movie])  # Create a DataFrame for each movie and its scores
             self.similar = pd.concat([self.similar, similar_movies], axis=1)  # Concatenate the DataFrames along columns
 
-    def getSimilar(self):
-        return self.similar
+    def getTopRecommendations(self, num_recommendations=5):
+        # Sum the similarity scores for all movies
+        total_scores = self.similar.sum(axis=1)
+        # Sort movies by total_scores in descending order and return the top recommendations
+        top_recommendations = total_scores.sort_values(ascending=False).head(num_recommendations)
+        return top_recommendations
 
     
 
@@ -42,13 +46,12 @@ ratings = ratings.fillna(0)  # Clean data
 ratings_std = ratings.apply(Collaborate(None).standardize)
 item_similarity = cosine_similarity(ratings_std.T)  # Item-to-item collab filter
 
-item_similarity_df = pd.DataFrame(item_similarity, index=ratings.columns, columns=ratings.columns)
-print(item_similarity_df)
 
-user1 = User([("action1", 5)], item_similarity_df)
-sim_movies = user1.getSimilar()
-sim_movies.sum().sort_values(ascending=False)
-print(sim_movies)
+item_similarity_df = pd.DataFrame(item_similarity, index=ratings.columns, columns=ratings.columns)
+
+user1 = User([("action1", 5),("action2",3)], item_similarity_df)
+recommendations=user1.getTopRecommendations(3)
+print(recommendations)
 
 
 
