@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from collections import deque
 import heapq
 
 def get_title_from_index(index):
@@ -50,4 +51,4 @@ movie_user_likes = "Transformers"
 movie_idx=get_index_from_title(movie_user_likes)
 
 similar_movies=getSimilar(cosine_sim,movie_idx)
-print(similar_movies)
+print(similar_movies)	
